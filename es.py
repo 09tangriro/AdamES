@@ -34,6 +34,7 @@ class ES(object):
 
         self.learning_curve = []
         self.parameter_curve = []
+        self.steady_state_rewards = []
         self.convergence_time = 0
 
     def _initialize_action(self):
@@ -135,5 +136,7 @@ class ES(object):
 
         if plot == 1:
             self.plot_learning_curve()
+        
+        self.steady_state_rewards = self.learning_curve[self.convergence_time:]
 
         return mu

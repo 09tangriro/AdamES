@@ -110,4 +110,6 @@ class AdamES(ES):
         if plot == 1:
             self.plot_learning_curve()
 
+        self.steady_state_rewards = self.learning_curve[self.convergence_time:]
+
         return mu
