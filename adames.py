@@ -104,7 +104,7 @@ class AdamES(ES):
             self.learning_curve.append(reward)
             self.parameter_curve.append(mu.copy())
 
-            if self.global_optimum and self.convergence_time == 0 and reward <= self.global_optimum + 0.5:
+            if self.global_optimum is not None and self.convergence_time == 0 and reward >= self.global_optimum - 0.5:
                 self.convergence_time = i
 
         if plot == 1:
