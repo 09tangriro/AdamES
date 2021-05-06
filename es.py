@@ -12,6 +12,7 @@ class ES(object):
         sigma,
         alpha,
         action_ranges,
+        global_optimum=None,
     ):
         """
         :param env: simulation environment
@@ -21,16 +22,19 @@ class ES(object):
         :param alpha: learning rate
         :param action_ranges: clip the search space to the desired action range,
             shape = (num_actions, 2)
+        :param global_optimum: the optimum value for checking convergence
         """
         self.env = env
         self.num_actions = num_actions
         self.sigma = sigma
         self.alpha = alpha
         self.action_ranges = action_ranges
+        self.global_optimum = global_optimum
         assert len(self.action_ranges) == num_actions
 
         self.learning_curve = []
         self.parameter_curve = []
+        self.convergence_time = 0
 
     def _initialize_action(self):
         action = np.zeros(shape=(self.num_actions))
@@ -125,6 +129,9 @@ class ES(object):
 
             self.learning_curve.append(reward)
             self.parameter_curve.append(mu.copy())
+
+            if self.global_optimum and self.convergence_time == 0 and reward <= self.global_optimum + 0.5:
+                self.convergence_time = i
 
         if plot == 1:
             self.plot_learning_curve()

@@ -13,6 +13,7 @@ class AdamES(ES):
         action_ranges,
         beta1 = 0.9,
         beta2 = 0.999,
+        global_optimum=None
     ):
         """
         :param env: simulation environment
@@ -24,16 +25,15 @@ class AdamES(ES):
             shape = (num_actions, 2)
         :param beta1: adam coefficient 1
         :param beta2: adam coefficient 2
+        :param global_optimum: the optimum value for checking convergence
         """
-        super(AdamES, self).__init__(env, num_actions, sigma, alpha, action_ranges)
+        super(AdamES, self).__init__(env, num_actions, sigma, alpha, action_ranges, global_optimum)
 
         self.beta1 = beta1
         self.beta2 = beta2
 
         self.momentum = 0
         self.dampener = 0
-        self.learning_curve = []
-        self.parameter_curve = []
 
     def _adam(self, grad, t):
         self.momentum = (1 - self.beta1) * grad + self.beta1 * self.momentum
@@ -103,6 +103,9 @@ class AdamES(ES):
 
             self.learning_curve.append(reward)
             self.parameter_curve.append(mu.copy())
+
+            if self.global_optimum and self.convergence_time == 0 and reward <= self.global_optimum + 0.5:
+                self.convergence_time = i
 
         if plot == 1:
             self.plot_learning_curve()
